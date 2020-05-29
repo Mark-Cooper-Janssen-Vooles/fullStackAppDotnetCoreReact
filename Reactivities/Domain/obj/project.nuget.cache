@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "8MdkBFwYkXJv6waIW5n5on8MLVTpX8sAk0M7H7Pmclq0nhKddNG8CbhHMr7cf+4dtrM2nhhg4MKddFLuuD4Kwg==",
+  "success": true,
+  "projectFilePath": "/Users/mark/Desktop/code/fullStackApp/Reactivities/domain/Domain.csproj",
+  "expectedPackageFiles": [
+    "/Users/mark/.nuget/packages/microsoft.netcore.platforms/1.1.0/microsoft.netcore.platforms.1.1.0.nupkg.sha512",
+    "/Users/mark/.nuget/packages/netstandard.library/2.0.3/netstandard.library.2.0.3.nupkg.sha512"
+  ],
+  "logs": []
+}
