@@ -1,9 +1,0 @@
-/Users/mark/Desktop/code/fullStackApp/Reactivities/domain/bin/Debug/netstandard2.1/Domain.deps.json
-/Users/mark/Desktop/code/fullStackApp/Reactivities/Domain/bin/Debug/netstandard2.1/Domain.dll
-/Users/mark/Desktop/code/fullStackApp/Reactivities/Domain/bin/Debug/netstandard2.1/Domain.pdb
-/Users/mark/Desktop/code/fullStackApp/Reactivities/Domain/obj/Debug/netstandard2.1/Domain.csprojAssemblyReference.cache
-/Users/mark/Desktop/code/fullStackApp/Reactivities/Domain/obj/Debug/netstandard2.1/Domain.csproj.CoreCompileInputs.cache
-/Users/mark/Desktop/code/fullStackApp/Reactivities/Domain/obj/Debug/netstandard2.1/Domain.AssemblyInfoInputs.cache
-/Users/mark/Desktop/code/fullStackApp/Reactivities/Domain/obj/Debug/netstandard2.1/Domain.AssemblyInfo.cs
-/Users/mark/Desktop/code/fullStackApp/Reactivities/Domain/obj/Debug/netstandard2.1/Domain.dll
-/Users/mark/Desktop/code/fullStackApp/Reactivities/Domain/obj/Debug/netstandard2.1/Domain.pdb
