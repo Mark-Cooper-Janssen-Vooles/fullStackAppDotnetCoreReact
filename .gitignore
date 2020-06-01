@@ -1,7 +1,7 @@
 Course_Assets
-bin
-obj
-.vscode
-.DS_store
-appsettings.json
-*.db
+reactivities/bin
+reactivities/obj
+reactivities/.vscode
+reactivities/.DS_store
+reactivities/appsettings.json
+reactivities/*.db
