@@ -1,6 +1,6 @@
 # Building an app with .net core and react
 
-### Part 2: The walking skeleton
+## Part 2: The walking skeleton
 A walking skeleton is a tiny implementation of the system that performs a small end-to-end function that links together the main architectural components. The architecture and functionality can then evolve in parrallel.
 
 This will be the theme: We will do the simplest thing we can, to ensure our end-to-end walking skeleton is up and working.
@@ -243,4 +243,166 @@ Whenever you write a method that has a potential to be long running (any call to
 
 ===
 
+Summary: 
+
+![](https://blog.cleancoder.com/uncle-bob/images/2012-08-13-the-clean-architecture/CleanArchitecture.jpg)
+
+"Entities" represent whats in domain (aka the value)
+"Use cases" refer to our application project 
+"controllers" refer to our API project
+
+Right now our API has too much logic in it, we want our application project to be responsible for this business logic. 
+
+
+===
+
+## Part 3: Walking Skeleton Part 2 - Client (ui)
+
+- create-react-app
+- review the app
+- react concepts & typescript
+- react state
+- fetch data from the api
+- CORS
+- semantic ui
+
+
+``npx create-react-app <name>`` => it will default to using yarn if its installed, he prefers using npm => also going to use a typscript switch
+
+in root folder (reactivities):
+``npx create-react-app client-app --use-npm --typescript``
+
+cd client-app
+npm start
+
+the project will start and open a tab on localhost:3000
+
+===
+
+### Intro to Typescript
+
+Typescript Rocks:
+- strong typing 
+- object orientated
+- better intellisense
+- access modifiers (priv, public, protected)
+- access to future javascript features
+- catches silly mistakes in development
+- 3rd party libraries
+- easy to learn if you know JS. you can always use as much or little as you want 
+
+Typescript is annoying:
+- more upfront code (you don't need it till you need it - but better in the long run!)
+- 3rd party libraries (not all have typescript support!)
+- strict mode is strict!
+
+===
+
+### Typescript basics demo
+
+````ts
+// let data: number | string;
+
+// data = '42';
+
+//for simple types like a number, specifying the type is redundant 
+
+let data = 42; 
+
+data = 10;
+
+//typically we'll be using objects! 
+interface ICar {
+    color: string;
+    model: string;
+    topSpeed?: number; //? makes this optional
+}
+
+const car1: ICar = {
+    color: 'blue',
+    model: 'BMW'
+}
+
+const car2: ICar = {
+    color: 'red',
+    model: 'Mercedes',
+    topSpeed: 100
+}
+
+const multiply = (x: number, y: number): void => {
+    // return (x * y).toString();
+    y * x;
+}
+````
+
+===
+
+### Typescript with React 
+Theres two choices: to use flow or typescript 
+
+flow: doesn't work well with vs code, performance complaints, smaller community 
+
+super shortcut: rfc + tab 
+creates a react functional component
+
+===
+
+### Connecting API to frontend: 
+
+In react: 
+````cs
+class App extends Component {
+  state = {
+    values: []
+  }
+
+  componentDidMount() {
+    axios
+      .get('http://localhost:5000/api/values')
+      .then((response) => {
+        console.log(response);
+        this.setState({
+          values: response.data
+        });
+      });
+  }
+
+  render() {
+    return (
+      <div className="App">
+        <h1> test</h1>
+        <ul>
+          {this.state.values.map((value: any) => (
+            <li key={value.id}>{value.name}</li>
+          ))}
+        </ul>
+      </div>
+    );
+  }
+}
+
+export default App;
+````
+
+add CORS policy to API in startup.cs:
+````cs
+//in configure services:
+services.AddCors(opt => 
+            {
+                opt.AddPolicy("CorsPolicy", policy => 
+                {
+                    policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000");
+                    //things from localhost:3000 will be allowed to use any header and any method 
+                });
+            });
+//in configure:
+app.UseCors("CorsPolicy");
+````
+
+===
+
+### Adding semantic UI to our app:
+semantic-ui comes with typescript support!
+https://react.semantic-ui.com/usage
+npm install semantic-ui-react 
 
