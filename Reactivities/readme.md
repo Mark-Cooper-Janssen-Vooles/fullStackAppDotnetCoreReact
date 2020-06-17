@@ -406,3 +406,111 @@ semantic-ui comes with typescript support!
 https://react.semantic-ui.com/usage
 npm install semantic-ui-react 
 
+
+===
+## Module 4: Creating a CRUD application using the CQRS + Mediator pattern
+
+In this module: 
+- create, read, update, delete
+- thin API controllers (put logic in controller into application layer, api controllers responsible for simply recieving http requests and seting http responses)
+- seeding more data ()
+- adding more migrations
+- MediatR
+- the CQRS + MediatR Pattern
+
+
+===
+
+### Adding the activity entity
+- in domain, made activity class
+- we want entity framework to create a table in our database for our new class
+- in dataContext, made new dbSet ``public DbSet<Activity> Activities { get; set; }``
+- need to ``dotnet ef migrations add "ActivityEntityAdded" -p Persistence/ -s API/``
+
+#### Seeding activity data
+- instead of using the onModelCreating method in DataContext:
+````cs
+ protected override void OnModelCreating(ModelBuilder builder)
+        {
+            builder.Entity<Value>()
+                .HasData(
+                    new Value {Id = 1, Name = "Value 101"},
+                    new Value {Id = 2, Name = "Value 102"},
+                    new Value {Id = 3, Name = "Value 103"}
+                );
+        }
+````
+- makes a new file Seed.cs in persistence, give it a list of activities, save it, and in program.cs add ``Seed.SeedData(context);``
+- now when the api is restarted with ``dotnet run`` or ``dotnet watch run`` (will auto restart), the table is updated! view => command pallet => sqlite open database
+
+#### Command-Query Separation
+Command: (write)
+- does something
+- modifies state
+- should not return a value
+
+Query: (read)
+- answers a question
+- does not modify state
+- should return a value
+
+CQRS "command query responsibility segregation"
+
+CQRS in a single database:
+- commands use domain
+- queries use database
+- simple to implement 
+
+CQRS with a read / write database (two databases!):
+- one optimised for writing
+- one optimised for reading
+- in our app we'll do more reading, so it makes sense to have one optimised for reading... it can make our app much faster.
+- commands use write DB
+- queries use read DB
+- eventual consistency (our write database may not be 100% in sync all the time with our read database)
+- can be faster
+
+CQRS with event store: 
+- instead of using a write DB, we use an event store 
+- (... which stores events!)
+- event store plays these events into our read db, so its up to date. introduces complexity to app. 
+- if your bank has $200, and the next day $100. you could phone them up, and they will say they dont know what happened. But the idea of event sourcing is that every event is tracked, so they keep a record. Buy widget -$50, buy food -$50. So it should be 100 and makes sense. 
+
+PROS to event store:
+- scalability
+- flexibility
+- event sourcing
+
+CONS to event store:
+- more complex than other patterns
+- does not modify state
+- event sourcing costs
+
+#### Introduction to MediatR
+Going from the outside (UI, DB) to inside circles (controllers, use cases, entities):
+in general, furhter in you go, higher the lvl the software becomes. The outer circles are mechanisms, the inner circles are policies.  This architecture works via the dependency rule: source code dependencies can only point inwards. Nothing in an inner circle can know anything about an outer circle
+
+The idea of mediatr: 
+1. takes an object in
+2. handles it, does some logic processing etc
+3. spits an object out 
+
+I.e. a common handler - 'create activity':
+object in:
+- { title: test activity, date: 21 oct 2020 }
+object out: 
+- create new activity
+- save new activity to db
+- return 'Unit' (so API controllers know this has been successful, its a special MediatR thing - then it knows it has been successful, and will send out HTTP response like a 200)
+
+i.e. a common query handler - 'get activity':
+object in:
+- { id: 3 }
+object out: 
+- get activity from DB with id of 3
+- if activity does not exist, return (from handler, not API controller) not found
+- if the activity is found, project into activity DTO (data transfer objects)
+- return activityDTO
+
+#### Creating our first query handler 
+

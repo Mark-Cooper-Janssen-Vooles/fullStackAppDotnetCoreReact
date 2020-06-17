@@ -12,6 +12,8 @@ namespace Persistence
 
         public DbSet<Value> Values { get; set; }
 
+        public DbSet<Activity> Activities { get; set; }
+
         //protected means available to this class or any inherited classes
         //override because we're overriding a method that exists in DbContext
         protected override void OnModelCreating(ModelBuilder builder)
