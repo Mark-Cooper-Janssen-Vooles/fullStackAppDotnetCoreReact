@@ -488,7 +488,7 @@ CONS to event store:
 
 #### Introduction to MediatR
 Going from the outside (UI, DB) to inside circles (controllers, use cases, entities):
-in general, furhter in you go, higher the lvl the software becomes. The outer circles are mechanisms, the inner circles are policies.  This architecture works via the dependency rule: source code dependencies can only point inwards. Nothing in an inner circle can know anything about an outer circle
+in general, further in you go, higher the lvl the software becomes. The outer circles are mechanisms, the inner circles are policies.  This architecture works via the dependency rule: source code dependencies can only point inwards. Nothing in an inner circle can know anything about an outer circle
 
 The idea of mediatr: 
 1. takes an object in
@@ -513,4 +513,15 @@ object out:
 - return activityDTO
 
 #### Creating our first query handler 
+
+MediatR will allow API controllers to send requests to our application project. 
+
+command+shift+p => use nuget to install mediatr => install mediatr.extensions.microsoft.dependenecyinjection into "application" project. 
+
+Because Application will get large, he divides each section into its own folder. I.e. "Activities", then creates "List.cs" inside that
+
+=> Makes first handler "List.cs"
+next is making controller that contains endpoints for HTTP requests and sends HTTP responses
+
+#### Creating the Activities API Controller
 
