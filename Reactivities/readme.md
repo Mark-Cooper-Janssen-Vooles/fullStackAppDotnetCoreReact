@@ -525,3 +525,75 @@ next is making controller that contains endpoints for HTTP requests and sends HT
 
 #### Creating the Activities API Controller
 
+Goes into API / controllers / creates 'activitiesController.cs'
+
+any api controller needs:
+- a root
+- an api attribute
+- to derive from the MVC controller base class ': ControllerBase' , because we're using react for the views
+
+check ActivitiesController.cs for a template on how to use MediatR. Also note that in startup.cs in configure services, ``services.AddMediatR(typeof(List.Handler).Assembly);`` was added
+
+can now use postman to hit localhost:5000/api/activities and it GET's all the activities.
+
+#### Adding the details handler (to get single activity)
+
+in application/activities adds Details.cs to take care of this process
+
+test in postman
+
+NOTE: 
+If you use an id that doesn't exist, i.e. 
+``{{url}}/api/activities/8e9a9fa5-a6b3-419a-9f20-9a53d8edf527``, you will get s 204 no content, and null returned. 
+if you don't use a guid i.e.
+``{{url}}/api/activities/8e9``, you get a 400 bad request and a json error validation message, saying 8e9 is not valid.
+The reason we're getting these is because the ``[ApiController]`` tag at the top of the ActivitiesController.cs is doing a bit o black box magic.
+
+
+#### Cancellation Tokens
+
+we're not going to use these in our application. 
+What is it used for?
+When you go to a page and it gets stuck loading - usually you get bored, navigate away or hit refresh. If the user hits a refresh button 5 times, it sends the request 5 times to the server. The server is probably working hard to get a response if its taking awhile. 
+If a user refreshes, the original request has been aborted but our server doesn't know this. Server will continue to run request, even though the user has aborted the request, and throw the results away and do nothing with them. 
+
+The cancellation token solves this problem. 
+
+In List.cs, .ToListAsync() can take a paramater of the cancellation token. This means if the request is aborted, it has the ability to cancel the request. 
+
+in List.cs: 
+````cs
+public async Task<List<Activity>> Handle(Query request, CancellationToken cancellationToken)
+            {
+                try
+                {
+                    for (var i = 0; i < 10; i++)
+                    {
+                        cancellationToken.ThrowIfCancellationRequested();
+                        await Task.Delay(1000, cancellationToken);
+                        _logger.LogInformation($"Task {i} has completed");
+                    }
+                }
+                catch (Exception ex) when (ex is TaskCanceledException)
+                {
+                    _logger.LogInformation("Task was cancelled");
+                }
+                
+                var activities = await _context.Activities.ToListAsync(cancellationToken);
+
+                return activities;
+            }
+````
+
+in activitiesController.cs:
+````cs
+[HttpGet]
+        public async Task<ActionResult<List<Activity>>> List()
+        {
+            return await _mediator.Send(new List.Query());
+        }
+````
+
+Cancellation tokens can be useful, but we wont make any queries that take a long time so they wont help us.
+
+#### Adding the Create Handler 
