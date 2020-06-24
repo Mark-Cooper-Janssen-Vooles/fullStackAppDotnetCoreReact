@@ -621,3 +621,31 @@ If request is not successful, i.e. sucess = false, we throw an exeception.
 
 #### Adding a delete Handler
 pretty much same as before. 
+
+### Summary module 4: 
+- create, read, update and delete
+- thin API controllers
+- seeding more data
+- adding more migrations
+- MediatR
+- CQRS + MediatR pattern
+
+# Module 5 - Creating a CRUD Application in React
+take the CRUD from the api and represent that in the browser 
+- folder structure
+- building the CRUD app
+- React hooks
+- forms in react
+- semantic UI
+
+#### Intro to React hooks
+- react launched in 2013, no classes in JS 
+- in 2015 es6 is released, classes introduced. react made use of these JS classes
+
+why hooks?
+- its hard to reuse stateful logic between components, with hooks we can extract stateful logic from a component easily
+- complex components become hard to understand 
+- classes confuse both people and machines, classes can be a large barrier to learning react. 
+- hooks let you use react features without classes
+
+
