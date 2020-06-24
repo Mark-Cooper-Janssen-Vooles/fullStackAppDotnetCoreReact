@@ -597,3 +597,26 @@ in activitiesController.cs:
 Cancellation tokens can be useful, but we wont make any queries that take a long time so they wont help us.
 
 #### Adding the Create Handler 
+in application, activities, make create.cs
+
+MediatR seems to take info in via "command". 
+
+
+.SaveChangesAsync() returns a boolean of the number of changes made to the database. So if we want to confirm it worked: 
+````cs
+var success = await _context.SaveChangesAsync() > 0;
+
+if (success) return Unit.Value;
+
+throw new Exeception("Problem saving changes");
+````
+Unit.Value is an empty object, but we are returning to our API controller, which means our API controller will return a 200 ok response if it recieves this empty object. 
+
+If request is not successful, i.e. sucess = false, we throw an exeception.
+
+
+#### Dealing with boiler plate code in our handlers
+
+#### Adding an Edit Handler
+
+#### Adding a delete Handler
