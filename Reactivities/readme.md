@@ -620,3 +620,4 @@ If request is not successful, i.e. sucess = false, we throw an exeception.
 #### Adding an Edit Handler
 
 #### Adding a delete Handler
+pretty much same as before. 
