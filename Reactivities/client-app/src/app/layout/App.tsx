@@ -1,37 +1,46 @@
-import React, {Component} from 'react';
+import React, {useState, useEffect} from 'react';
 import axios from 'axios';
-import { Header, Icon, List } from 'semantic-ui-react'
+import { Header, Icon, List, Container } from 'semantic-ui-react'
+import { IActivity } from '../models/activity';
+import { NavBar } from '../../features/nav/NavBar';
+import { ActivityDashboard } from '../../features/activities/dashboard/ActivityDashboard';
 
-class App extends Component {
-  state = {
-    values: []
+const App = () => {
+  const [activities, setActivities] = useState<IActivity[]>([]);
+  const [selectedActivity, setSelectedActivity] = useState<IActivity | null>();
+  const [editMode, setEditMode] = useState(false);
+
+  const handleOpenCreateForm = () => {
+    setSelectedActivity(null);
+    setEditMode(true);
   }
 
-  componentDidMount() {
+  const handleSelectActivity = (id: string) => {
+    setSelectedActivity(activities.filter(a => a.id === id)[0]);
+  }
+
+  useEffect(() => {
     axios
-      .get('http://localhost:5000/api/values')
+      .get<IActivity[]>('http://localhost:5000/api/activities')
       .then((response) => {
-        this.setState({
-          values: response.data
-        });
+        setActivities(response.data);
       });
-  }
+  }, []);
 
-  render() {
-    return (
-      <div>
-        <Header as='h2'>
-          <Icon name='users' />
-          <Header.Content>Reactivities</Header.Content>
-        </Header>
-        <List>
-          {this.state.values.map((value: any) => (
-            <List.Item key={value.id}>{value.name}</List.Item>
-          ))}
-        </List>
-      </div>
-    );
-  }
+  return (
+    <>
+      <NavBar openCreateForm={handleOpenCreateForm} />
+      <Container style={{marginTop: '7em'}}>
+        <ActivityDashboard 
+        activities={activities} 
+        selectActivity={handleSelectActivity} 
+        selectedActivity={selectedActivity}
+        editMode={editMode}
+        setEditMode={setEditMode}
+        />
+      </Container>
+    </>
+  );
 }
 
 export default App;

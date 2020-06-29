@@ -648,4 +648,120 @@ why hooks?
 - classes confuse both people and machines, classes can be a large barrier to learning react. 
 - hooks let you use react features without classes
 
+does some folder structure stuff ... 
+
+#### Getting list of activities from API instead of just values
+
+#### Adding an activity interface into typescript
+
+in client-app/src/app/ makes new folder "models" for interface to live!
+
+creates 'activity.ts' in there, interfaces typically start with an I, i.e. "IActivity", as per convention.
+
+a component itself can have its type set, the first thing must be for the properties, and the 2nd for the state. 
+
+making state readonly is good practice, as it shouldn't be directly edited (it should be changed with setState)
+
+
+An example using react component classes:
+````js
+import React, {Component} from 'react';
+import axios from 'axios';
+import { Header, Icon, List } from 'semantic-ui-react'
+import { IActivity } from '../models/activity';
+
+interface IState {
+  activities: IActivity[]
+}
+
+class App extends Component<{}, IState> {
+  readonly state: IState = {
+    activities: []
+  }
+
+  componentDidMount() {
+    axios
+      .get<IActivity[]>('http://localhost:5000/api/activities')
+      .then((response) => {
+        this.setState({
+          activities: response.data
+        });
+      });
+  }
+
+  render() {
+    return (
+      <div>
+        <Header as='h2'>
+          <Icon name='users' />
+          <Header.Content>Reactivities</Header.Content>
+        </Header>
+        <List>
+          {this.state.activities.map((activity: IActivity) => (
+            <List.Item key={activity.id}>{activity.title}</List.Item>
+          ))}
+        </List>
+      </div>
+    );
+  }
+}
+
+export default App;
+````
+
+#### Refactoring class component into functional hook component
+
+using hooks instead:
+
+````js
+import React, {useState, useEffect} from 'react';
+import axios from 'axios';
+import { Header, Icon, List } from 'semantic-ui-react'
+import { IActivity } from '../models/activity';
+
+const App = () => {
+  const [activities, setActivities] = useState<IActivity[]>([]);
+
+  useEffect(() => {
+    axios
+      .get<IActivity[]>('http://localhost:5000/api/activities')
+      .then((response) => {
+        setActivities(response.data);
+      });
+  }, []);
+
+  return (
+    <div>
+      <Header as='h2'>
+        <Icon name='users' />
+        <Header.Content>Reactivities</Header.Content>
+      </Header>
+      <List>
+        {activities.map((activity: IActivity) => (
+          <List.Item key={activity.id}>{activity.title}</List.Item>
+        ))}
+      </List>
+    </div>
+  );
+}
+
+export default App;
+````
+
+#### Adding the nav bar
+
+Made the nav bar, made activity item etc.. mostly just semantic UI styling stuff.
+
+When making activity item, starts off a new react functional component by passing down the props of "activities" in app.tsx:
+- the children props that this gets passed to, need to be of type ``React.FC<IProps>``, and IProps is the prop interface. i.e.:
+
+````js
+interface IProps {
+    activities: IActivity[]
+}
+
+export const ActivityList: React.FC<IProps> = ({activities}) => {
+    return ()
+}
+````
 
