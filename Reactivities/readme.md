@@ -775,3 +775,6 @@ At some point installs "npm install uuid"
 ``import {v4 as uuid} from 'uuid';``
 errors out, no type definition files for this.. error message gives the answer: 
 ``npm install @types/uuid``
+
+hooks up CRUD stuff in react: can now create, read, update, delete. without a state management tool like redux. Also no persistence (not using the dotnet API)
+
