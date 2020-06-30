@@ -765,3 +765,13 @@ export const ActivityList: React.FC<IProps> = ({activities}) => {
 }
 ````
 
+===
+
+### LOTS OF REACT stuff 
+
+using hooks, passing props down. Its all stuff I know already. 
+
+At some point installs "npm install uuid" 
+``import {v4 as uuid} from 'uuid';``
+errors out, no type definition files for this.. error message gives the answer: 
+``npm install @types/uuid``
