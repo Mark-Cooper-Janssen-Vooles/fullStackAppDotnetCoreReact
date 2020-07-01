@@ -778,3 +778,97 @@ errors out, no type definition files for this.. error message gives the answer:
 
 hooks up CRUD stuff in react: can now create, read, update, delete. without a state management tool like redux. Also no persistence (not using the dotnet API)
 
+## MODULE 6: AXIOS
+All about persisting data, using axios to call our API.
+
+- install axios
+- refactor code to use it 
+
+axios vs fetch (inbuilt js library), axios does this for you:
+- http error codes
+- interceptors (intercept a request or response and do something with it, errors/headers)
+- response object
+  - data
+  - status
+  - statusText
+  - ...more
+
+### Setting up the agent.ts file 
+Currently we've got app.tsx calling axios directly, but its better practice to seperate our API calls from our components. 
+
+in src/app/make new flder "api"/ new file "agent.ts" => will define all of our API calls here
+
+Agent.ts: 
+Sets things up so we can make use of them in our components. 
+
+``axios.defaults.baseURL = 'http://localhost:5000/api';`` sets so that all the url's will have this in front by default 
+
+checkout agent.ts
+
+#### using agent.ts to persist activities CRUD actions
+*some weird issue with firefox date picker, this only works with chrome in the browser at this point
+````js
+  const handleCreateActivity = (activity: IActivity) => {
+    // when we create, our command doesn't return the created resource. we don't need it to, because we have access to the newly created activity in react itself. using the below method, it will only update the react state if its been updated on the api
+    agent.Activities.create(activity).then(() => {
+      setActivities([...activities, activity])
+      setSelectedActivity(activity);
+      setEditMode(false);
+    });
+  }
+````
+
+### Adding delay for local dev to simulate what it would be like in production 
+
+````js
+//currying 
+const sleep = (ms: number) => (response: AxiosResponse) => new Promise<AxiosResponse>(resolve => setTimeout(() => resolve(response), ms));
+
+const requests = {
+    get: (url: string) => axios.get(url).then(sleep(1000)).then(responseBody),
+    post: (url: string, body: {}) => axios.post(url, body).then(sleep(1000)).then(responseBody),
+    put: (url: string, body: {}) => axios.put(url, body).then(sleep(1000)).then(responseBody),
+    del: (url: string) => axios.delete(url).then(sleep(1000)).then(responseBody)
+}
+````
+
+Currying:
+``const sleep = (ms: number) => (response: AxiosResponse) => new Promise<AxiosResponse>(resolve => setTimeout(() => resolve(response), ms));``
+
+The process of 'currying' a function is a process where we can transform a function with multiple arguments, into a sequence of nesting functions. 
+
+#### Isolating loading indicator on delete button 
+
+Uses state to do this
+in app.tsx:
+````js
+  const handleDeleteActivity = (event: SyntheticEvent<HTMLButtonElement>, id: string) => {
+    setSubmitting(true);
+    setTarget(event.currentTarget.name);
+    agent.Activities.delete(id).then(() => {
+      setActivities([...activities.filter(a => a.id !== id)]);
+    }).then(() => setSubmitting(false));
+  }
+````
+
+in activity list.tsx:
+````js
+<Button
+name={activity.id} 
+loading={target === activity.id && submitting}
+onClick={(e) => deleteActivity(e, activity.id)}
+floated="right" content="Delete" color="red" />
+````
+
+it uses the onClick to pass the event to the "deleteActivity" function, which is used by app.tsx to set the target as a string. 
+
+then noodles target down, and checks if that is the same as activity.id and if so, then only makes loading appear on that one. 
+
+===
+
+resetting the database: turn off API, cd into reactivities folder, ``dotnet ef database drop -p Persistence/ -s API/``
+
+it will ask for confirmation,say y
+
+``cd api/`` 
+``dotnet watch run`` => because we're auto seeding, this will seed it 
